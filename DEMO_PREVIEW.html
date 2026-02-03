@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Shelf Demo - How It Looks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1A1653, #0F0E2F);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 48px;
+            background: linear-gradient(90deg, #3DDCBE, #4F7CFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .info-box {
+            background: rgba(61, 220, 190, 0.1);
+            border: 2px solid rgba(61, 220, 190, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+        .info-box h2 {
+            color: #3DDCBE;
+            margin-bottom: 16px;
+        }
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .info-box li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #3DDCBE;
+            font-weight: bold;
+        }
+        .book-rack-demo {
+            background: linear-gradient(180deg, rgba(38, 36, 94, 0.3), rgba(20, 18, 63, 0.5));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 20px;
+            position: relative;
+        }
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 10px;
+        }
+        .book {
+            aspect-ratio: 3/4;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.4),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.15),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), transparent);
+            position: relative;
+        }
+        .book:hover {
+            transform: translateY(-12px) rotateZ(-3deg) translateX(2px);
+            box-shadow: 
+                0 20px 40px rgba(61, 220, 190, 0.25),
+                0 0 30px rgba(61, 220, 190, 0.15);
+            filter: brightness(1.1);
+        }
+        .book img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .book-info {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, 0.7) 70%, rgba(0, 0, 0, 0.9) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .book:hover .book-info {
+            opacity: 1;
+        }
+        .book-title {
+            font-weight: 800;
+            font-size: 11px;
+            line-height: 1.2;
+            margin-bottom: 2px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        .book-author {
+            font-size: 9px;
+            opacity: 0.85;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        .add-book {
+            aspect-ratio: 3/4;
+            border-radius: 4px;
+            border: 2px dashed rgba(61, 220, 190, 0.4);
+            background: linear-gradient(135deg, rgba(61, 220, 190, 0.08), rgba(79, 124, 255, 0.08));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .add-book:hover {
+            border-color: rgba(61, 220, 190, 0.7);
+            background: linear-gradient(135deg, rgba(61, 220, 190, 0.15), rgba(79, 124, 255, 0.12));
+            transform: translateY(-6px);
+        }
+        .add-book-icon {
+            font-size: 32px;
+            color: #3DDCBE;
+        }
+        .add-book-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(61, 220, 190, 0.8);
+            margin-top: 6px;
+        }
+        .demo-colors {
+            display: flex;
+            gap: 8px;
+            height: 100%;
+        }
+        .color-bar {
+            flex: 1;
+            border-radius: 4px;
+        }
+        .instructions {
+            margin-top: 40px;
+            background: rgba(79, 124, 255, 0.1);
+            border: 2px solid rgba(79, 124, 255, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .instructions h3 {
+            color: #4F7CFF;
+            margin-bottom: 16px;
+        }
+        .instructions ol {
+            padding-left: 20px;
+        }
+        .instructions li {
+            padding: 8px 0;
+            line-height: 1.6;
+        }
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Your Book Shelf Preview</h1>
+        
+        <div class="info-box">
+            <h2>✅ What You Have Now</h2>
+            <ul>
+                <li>Beautiful book rack display with grid layout</li>
+                <li>Click any book cover to view the PDF</li>
+                <li>Upload books with covers and PDFs via UI</li>
+                <li>Hover effects showing title and author</li>
+                <li>Remove books with confirmation</li>
+                <li>Automatic save to localStorage</li>
+                <li>3D animation effects on hover</li>
+            </ul>
+        </div>
+
+        <div class="book-rack-demo">
+            <div class="book-grid">
+                <!-- Sample Book 1 -->
+                <div class="book">
+                    <div class="demo-colors">
+                        <div class="color-bar" style="background: linear-gradient(180deg, #FF6B6B, #C92A2A);"></div>
+                        <div class="color-bar" style="background: linear-gradient(180deg, #FFD93D, #F59F00);"></div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">Sample Book 1</div>
+                        <div class="book-author">Author Name</div>
+                    </div>
+                </div>
+
+                <!-- Sample Book 2 -->
+                <div class="book">
+                    <div class="demo-colors">
+                        <div class="color-bar" style="background: linear-gradient(180deg, #6BCF7F, #2B8A3E);"></div>
+                        <div class="color-bar" style="background: linear-gradient(180deg, #51CF66, #37B24D);"></div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">Sample Book 2</div>
+                        <div class="book-author">Author Name</div>
+                    </div>
+                </div>
+
+                <!-- Sample Book 3 -->
+                <div class="book">
+                    <div class="demo-colors">
+                        <div class="color-bar" style="background: linear-gradient(180deg, #4C6EF5, #364FC7);"></div>
+                        <div class="color-bar" style="background: linear-gradient(180deg, #748FFC, #5C7CFA);"></div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">Sample Book 3</div>
+                        <div class="book-author">Author Name</div>
+                    </div>
+                </div>
+
+                <!-- Sample Book 4 -->
+                <div class="book">
+                    <div class="demo-colors">
+                        <div class="color-bar" style="background: linear-gradient(180deg, #AE3EC9, #862E9C);"></div>
+                        <div class="color-bar" style="background: linear-gradient(180deg, #CC5DE8, #BE4BDB);"></div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">Sample Book 4</div>
+                        <div class="book-author">Author Name</div>
+                    </div>
+                </div>
+
+                <!-- Sample Book 5 -->
+                <div class="book">
+                    <div class="demo-colors">
+                        <div class="color-bar" style="background: linear-gradient(180deg, #FF8787, #FA5252);"></div>
+                        <div class="color-bar" style="background: linear-gradient(180deg, #FF6B6B, #F03E3E);"></div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">Sample Book 5</div>
+                        <div class="book-author">Author Name</div>
+                    </div>
+                </div>
+
+                <!-- Sample Book 6 -->
+                <div class="book">
+                    <div class="demo-colors">
+                        <div class="color-bar" style="background: linear-gradient(180deg, #15AABF, #0C8599);"></div>
+                        <div class="color-bar" style="background: linear-gradient(180deg, #22B8CF, #15AABF);"></div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">Sample Book 6</div>
+                        <div class="book-author">Author Name</div>
+                    </div>
+                </div>
+
+                <!-- Add Book Button -->
+                <div class="add-book" onclick="alert('Click to add new books!\\n\\nIn your app:\\n1. Go to Resources → Reading Resources\\n2. Click the + button\\n3. Upload cover image and PDF')">
+                    <div class="add-book-icon">+</div>
+                    <div class="add-book-text">Add Book</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>🚀 How to Use Your Book Shelf</h3>
+            <ol>
+                <li><strong>Navigate</strong> to your app → Resources → Reading Resources tab</li>
+                <li><strong>Click</strong> the "Add Book" button (the + icon on the shelf)</li>
+                <li><strong>Fill in</strong> book details:
+                    <ul style="margin-top: 8px; padding-left: 20px;">
+                        <li>Book Title</li>
+                        <li>Author Name</li>
+                        <li>Publication Year</li>
+                        <li>Upload Cover Image (PNG/JPG)</li>
+                        <li>Upload PDF File</li>
+                    </ul>
+                </li>
+                <li><strong>Submit</strong> → Book appears on your shelf!</li>
+                <li><strong>Click any book</strong> to open the PDF viewer</li>
+                <li><strong>Hover</strong> over books to see remove button (X)</li>
+            </ol>
+
+            <h3 style="margin-top: 24px;">📁 Or Add PDFs from Backend</h3>
+            <div class="code-snippet">
+// 1. Drop PDFs in: public/assets/pdfs/
+// 2. Add book programmatically:
+
+const newBook = {
+  id: Date.now().toString(),
+  title: 'Book Title',
+  author: 'Author Name',
+  year: 2024,
+  coverImage: 'base64ImageString...',
+  pdfPath: '/assets/pdfs/your-book.pdf'
+};
+
+setBooks([...books, newBook]);
+            </div>
+        </div>
+    </div>
+</body>
+</html>

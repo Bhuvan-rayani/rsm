@@ -1,0 +1,8 @@
+{
+  "name": "RSM Task Portal",
+  "description": "A specialized task management and research guidance portal for Research Society MIT, featuring AI-powered research assistance and embedded resource links.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
