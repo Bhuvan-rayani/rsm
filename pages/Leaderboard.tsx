@@ -14,8 +14,8 @@ const Leaderboard: React.FC = () => {
   ];
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: THEME.primary }}>
-      {/* SIDEBAR - EMPTY FOR CONSISTENCY */}
-      <aside className="w-64 flex flex-col py-6 px-6 border-r" style={{ backgroundColor: THEME.primary, borderColor: `${THEME.textSecondary}33` }}>
+      {/* SIDEBAR - Hidden on mobile */}
+      <aside className="hidden md:flex w-64 flex-col py-6 px-6 border-r" style={{ backgroundColor: THEME.primary, borderColor: `${THEME.textSecondary}33` }}>
         <div className="mb-10">
           <h2 className="text-lg font-bold" style={{ color: THEME.textPrimary }}>Research Society</h2>
           <p className="text-xs" style={{ color: THEME.textSecondary }}>MIT</p>
@@ -32,12 +32,12 @@ const Leaderboard: React.FC = () => {
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col">
-        <header className="border-b px-8 py-6" style={{ borderColor: `${THEME.textSecondary}33` }}>
-          <h1 className="text-3xl font-bold" style={{ color: THEME.textPrimary }}>Leaderboard</h1>
+        <header className="border-b px-4 md:px-8 py-4 md:py-6" style={{ borderColor: `${THEME.textSecondary}33` }}>
+          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: THEME.textPrimary }}>Leaderboard</h1>
           <p className="text-sm mt-1" style={{ color: THEME.textSecondary }}>Top Performers</p>
         </header>
 
-        <main className="flex-1 overflow-auto p-8">
+        <main className="flex-1 overflow-auto p-4 md:p-8">
           <div className="max-w-4xl">
             <div className="backdrop-blur-sm border rounded-xl overflow-hidden" style={{ backgroundColor: THEME.cardBg, borderColor: `${THEME.textSecondary}33` }}>
               <div className="p-6 border-b" style={{ borderColor: `${THEME.textSecondary}33` }}>
@@ -45,7 +45,7 @@ const Leaderboard: React.FC = () => {
               </div>
               <div style={{ borderColor: `${THEME.textSecondary}33` }} className="divide-y">
                 {entries.map((e) => (
-                  <div key={e.rank} className="p-6 flex items-center justify-between hover:opacity-80 transition-all group" style={{ backgroundColor: THEME.cardBg }}>
+                  <div key={e.rank} className="p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:opacity-80 transition-all group" style={{ backgroundColor: THEME.cardBg }}>
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm`} style={{
                         backgroundColor: e.rank === 1 ? '#FCD34D33' : e.rank === 2 ? '#D1D5DB33' : e.rank === 3 ? '#FB923C33' : '#3B82F633',

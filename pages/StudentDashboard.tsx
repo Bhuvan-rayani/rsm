@@ -669,8 +669,8 @@ const StudentDashboard: React.FC = () => {
         <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(13,17,23,0.75) 0%, rgba(13,17,23,0.88) 45%, rgba(17,24,39,0.95) 100%)' }} />
 
         <div className="relative z-10 min-h-screen flex">
-      {/* SIDEBAR */}
-      <aside className="w-72 flex flex-col py-6 px-6 border-r" style={{ backgroundColor: THEME.sidebar, borderColor: 'rgba(255,255,255,0.06)' }}>
+      {/* SIDEBAR - Hidden on mobile */}
+      <aside className="hidden lg:flex w-72 flex-col py-6 px-6 border-r" style={{ backgroundColor: THEME.sidebar, borderColor: 'rgba(255,255,255,0.06)' }}>
         {/* Logo/Brand */}
         <div className="mb-10">
           <div className="flex items-center gap-3">
@@ -824,10 +824,10 @@ const StudentDashboard: React.FC = () => {
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col">
         {/* HEADER */}
-        <header className="border-b px-8 py-6 flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: THEME.background }}>
+        <header className="border-b px-4 md:px-8 py-4 md:py-6 flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: THEME.background }}>
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: THEME.textPrimary }}>Dashboard</h1>
-            <p className="text-sm mt-1" style={{ color: THEME.textSecondary }}>Welcome back, {newUsername || user?.displayName || user?.email?.split('@')[0]}!</p>
+            <h1 className="text-2xl md:text-3xl font-bold" style={{ color: THEME.textPrimary }}>Dashboard</h1>
+            <p className="text-xs md:text-sm mt-1 truncate max-w-[200px] sm:max-w-none" style={{ color: THEME.textSecondary }}>Welcome back, {newUsername || user?.displayName || user?.email?.split('@')[0]}!</p>
           </div>
           <button 
             onClick={() => setShowProfileModal(true)}
@@ -851,7 +851,7 @@ const StudentDashboard: React.FC = () => {
         </header>
 
         {/* CONTENT */}
-        <main className="flex-1 overflow-auto p-8" style={{ backgroundColor: THEME.background }}>
+        <main className="flex-1 overflow-auto p-4 md:p-8" style={{ backgroundColor: THEME.background }}>
           {/* TASKS TAB */}
           {activeTab === 'tasks' && (
             <div className="max-w-6xl">
@@ -1007,15 +1007,15 @@ const StudentDashboard: React.FC = () => {
 
                 {/* Video Library (page 1) */}
                 {!showVideoDetail && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ maxWidth: '100%' }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ maxWidth: '100%' }}>
                     {mockVideos.map((video, index) => (
                       <button
                         key={video.id}
                         onClick={() => { setSelectedVideoIndex(index); setShowVideoDetail(true); }}
-                        className="group rounded-3xl overflow-hidden text-left transition-all hover:-translate-y-2 hover:shadow-2xl"
-                        style={{ backgroundColor: `${THEME.card}E6`, border: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 10px 30px rgba(0,0,0,0.35)' }}
+                        className="group rounded-2xl overflow-hidden text-left transition-all hover:-translate-y-1 hover:shadow-2xl"
+                        style={{ backgroundColor: `${THEME.card}E6`, border: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 8px 24px rgba(0,0,0,0.25)' }}
                       >
-                        <div className="relative" style={{ aspectRatio: '16/9', minHeight: '400px' }}>
+                        <div className="relative" style={{ aspectRatio: '16/9' }}>
                           <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -1029,11 +1029,11 @@ const StudentDashboard: React.FC = () => {
                             {video.duration}
                           </div>
                         </div>
-                        <div className="p-6 space-y-3">
-                          <h3 className="font-bold text-2xl leading-tight line-clamp-2" style={{ color: THEME.textPrimary }}>
+                        <div className="p-5 space-y-2">
+                          <h3 className="font-bold text-lg leading-tight line-clamp-2" style={{ color: THEME.textPrimary }}>
                             {video.title}
                           </h3>
-                          <p className="text-base" style={{ color: THEME.textSecondary }}>
+                          <p className="text-sm" style={{ color: THEME.textSecondary }}>
                             {video.channel}
                           </p>
                         </div>

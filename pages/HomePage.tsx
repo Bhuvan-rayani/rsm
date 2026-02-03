@@ -91,19 +91,19 @@ const HomePage: React.FC = () => {
         {!user && (
           <div style={{ 
             display: 'flex', 
-            gap: '20px',
+            gap: 'clamp(12px, 3vw, 20px)',
             flexWrap: 'wrap',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            padding: '0 clamp(16px, 4vw, 32px)'
           }}>
             <button
               onClick={() => navigate('/login')}
-              style={{
-                padding: '18px 56px',
+              style={{                minWidth: 'clamp(200px, 40vw, 280px)',                padding: 'clamp(14px, 3vw, 18px) clamp(32px, 8vw, 56px)',
                 background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
                 color: '#0A0E27',
                 border: 'none',
                 borderRadius: '12px',
-                fontSize: '18px',
+                fontSize: 'clamp(14px, 3vw, 18px)',
                 fontWeight: '700',
                 cursor: 'pointer',
                 transition: 'all 0.3s',
@@ -126,14 +126,15 @@ const HomePage: React.FC = () => {
             <button
               onClick={() => navigate('/login')}
               style={{
-                padding: '18px 56px',
+                minWidth: 'clamp(200px, 40vw, 280px)',
+                padding: 'clamp(14px, 3vw, 18px) clamp(32px, 8vw, 56px)',
                 background: 'rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 color: 'white',
                 border: '2px solid rgba(212, 175, 55, 0.5)',
                 borderRadius: '12px',
-                fontSize: '18px',
+                fontSize: 'clamp(14px, 3vw, 18px)',
                 fontWeight: '700',
                 cursor: 'pointer',
                 transition: 'all 0.3s',
@@ -200,7 +201,7 @@ const HomePage: React.FC = () => {
               />
               
               <h1 style={{
-                fontSize: '64px',
+                fontSize: 'clamp(32px, 8vw, 64px)',
                 fontWeight: '800',
                 background: `linear-gradient(135deg, ${colors.textPrimary} 0%, ${colors.accent} 100%)`,
                 WebkitBackgroundClip: 'text',
@@ -213,7 +214,7 @@ const HomePage: React.FC = () => {
                 Research Society Manipal
               </h1>
               <h2 style={{
-                fontSize: '36px',
+                fontSize: 'clamp(18px, 4vw, 36px)',
                 fontWeight: '600',
                 color: colors.textSecondary,
                 letterSpacing: '0.5px',
@@ -226,12 +227,13 @@ const HomePage: React.FC = () => {
               <button
                 onClick={() => navigate('/dashboard')}
                 style={{
-                  padding: '18px 56px',
+                  padding: 'clamp(14px, 3vw, 18px) clamp(32px, 8vw, 56px)',
+                  minWidth: 'clamp(200px, 40vw, 300px)',
                   background: `linear-gradient(135deg, ${colors.accent} 0%, #B8860B 100%)`,
                   color: '#0A0E27',
                   border: 'none',
                   borderRadius: '12px',
-                  fontSize: '18px',
+                  fontSize: 'clamp(14px, 3vw, 18px)',
                   fontWeight: '700',
                   cursor: 'pointer',
                   transition: 'all 0.3s',

@@ -164,7 +164,7 @@ const TaskDetail: React.FC = () => {
         zIndex: 0, pointerEvents: 'none'
       }} />
 
-      <div style={{ maxWidth: '95vw', margin: '0 auto', padding: '40px 48px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '95vw', margin: '0 auto', padding: 'clamp(20px, 5vw, 48px)', position: 'relative', zIndex: 1 }}>
         
         {/* Navigation */}
         <button 
@@ -185,42 +185,54 @@ const TaskDetail: React.FC = () => {
         </button>
 
         {/* Header Section */}
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '60px' }}>
-          <div style={{ maxWidth: '600px' }}>
-            <span style={{ color: THEME.accent, fontWeight: 700, letterSpacing: '4px', textTransform: 'uppercase', fontSize: '12px' }}>
-              RESEARCH
-            </span>
-            <h1 style={{ fontSize: '56px', fontWeight: 800, letterSpacing: '-0.04em', marginTop: '12px' }}>
-              {task.title.split(':')[1] ? (
-                <>
-                  {task.title.split(':')[0].replace('RSM Task 1:', '').trim()}{' '}
-                  <span style={{ color: 'transparent', WebkitTextStroke: `1px ${THEME.accent}` }}>
-                    {task.title.split(':')[1]}
-                  </span>
-                </>
-              ) : task.title}
-            </h1>
-            <p style={{ color: THEME.textSecondary, fontSize: '18px', marginTop: '16px', lineHeight: '1.6' }}>
-              {task.description}
-            </p>
-          </div>
-          
-          {/* Stats Bar */}
-          <div style={{ ...glassStyle, padding: '16px 32px', display: 'flex', gap: '32px' }}>
-            <div>
-              <div style={{ fontSize: '10px', color: THEME.textSecondary, marginBottom: '4px' }}>DIFFICULTY</div>
-              <div style={{ fontWeight: 700, fontSize: '14px' }}>{task.difficulty.toUpperCase()}</div>
+        <header style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '40px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+            <div style={{ maxWidth: '600px' }}>
+              <span style={{ color: THEME.accent, fontWeight: 700, letterSpacing: '4px', textTransform: 'uppercase', fontSize: '12px' }}>
+                RESEARCH
+              </span>
+              <h1 style={{ fontSize: 'clamp(32px, 8vw, 56px)', fontWeight: 800, letterSpacing: '-0.04em', marginTop: '12px' }}>
+                {task.title.split(':')[1] ? (
+                  <>
+                    {task.title.split(':')[0].replace('RSM Task 1:', '').trim()}{' '}
+                    <span style={{ color: 'transparent', WebkitTextStroke: `1px ${THEME.accent}` }}>
+                      {task.title.split(':')[1]}
+                    </span>
+                  </>
+                ) : task.title}
+              </h1>
+              <p style={{ color: THEME.textSecondary, fontSize: '18px', marginTop: '16px', lineHeight: '1.6' }}>
+                {task.description}
+              </p>
             </div>
-            <div style={{ width: '1px', background: THEME.glassBorder }} />
-            <div>
-              <div style={{ fontSize: '10px', color: THEME.textSecondary, marginBottom: '4px' }}>STATUS</div>
-              <div style={{ fontWeight: 700, fontSize: '14px', color: THEME.accent }}>{task.status.toUpperCase()}</div>
+            
+            {/* Stats Bar */}
+            <div style={{ ...glassStyle, padding: '16px 24px', display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div>
+                <div style={{ fontSize: '10px', color: THEME.textSecondary, marginBottom: '4px' }}>DIFFICULTY</div>
+                <div style={{ fontWeight: 700, fontSize: '14px' }}>{task.difficulty.toUpperCase()}</div>
+              </div>
+              <div style={{ width: '1px', background: THEME.glassBorder }} />
+              <div>
+                <div style={{ fontSize: '10px', color: THEME.textSecondary, marginBottom: '4px' }}>STATUS</div>
+                <div style={{ fontWeight: 700, fontSize: '14px', color: THEME.accent }}>{task.status.toUpperCase()}</div>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Three-Column Layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 4fr 1.2fr', gap: '48px', alignItems: 'start' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 'clamp(24px, 4vw, 48px)', 
+          alignItems: 'start'
+        }} className="task-grid">
+          <style>{`
+            @media (min-width: 1024px) {
+              .task-grid { grid-template-columns: 1.2fr 4fr 1.2fr !important; }
+            }
+          `}</style>
           
           {/* Column 1: Tools & Concepts */}
           <aside style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -295,19 +307,22 @@ const TaskDetail: React.FC = () => {
             {task.details.sections.map((section, i) => (
               <div 
                 key={i} 
-                style={{ ...glassStyle, padding: '32px', display: 'flex', gap: '32px', alignItems: 'center' }}
+                style={{ ...glassStyle, padding: 'clamp(20px, 4vw, 32px)', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'flex-start' }}
+                className="task-milestone"
                 onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 30px ${THEME.accentMuted}`}
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
               >
-                <div style={{ 
-                  fontSize: '48px', fontWeight: 900, color: 'rgba(255,255,255,0.05)',
-                  minWidth: '80px'
-                }}>
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>{section.title}</h4>
-                  <p style={{ color: THEME.textSecondary, lineHeight: '1.8', fontSize: '18px' }}>{section.content}</p>
+                <div style={{ display: 'flex', gap: 'clamp(16px, 3vw, 32px)', alignItems: 'flex-start', width: '100%' }}>
+                  <div style={{ 
+                    fontSize: 'clamp(32px, 6vw, 48px)', fontWeight: 900, color: 'rgba(255,255,255,0.05)',
+                    minWidth: 'clamp(50px, 10vw, 80px)'
+                  }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: 700, marginBottom: '12px' }}>{section.title}</h4>
+                    <p style={{ color: THEME.textSecondary, lineHeight: '1.8', fontSize: 'clamp(14px, 2vw, 18px)' }}>{section.content}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -326,13 +341,14 @@ const TaskDetail: React.FC = () => {
                   
                   return (
                     <div key={idx} style={{ 
-                      borderRadius: '16px', 
+                      borderRadius: 'clamp(12px, 2vw, 16px)', 
                       overflow: 'hidden', 
                       border: `1px solid ${THEME.glassBorder}`,
                       width: '100%',
                       position: 'relative',
-                      paddingBottom: '56.25%', // 16:9 aspect ratio
-                      height: 0
+                      paddingBottom: '56.25%',
+                      height: 0,
+                      maxWidth: '100%'
                     }}>
                       {videoId ? (
                         <iframe
@@ -379,14 +395,14 @@ const TaskDetail: React.FC = () => {
             
             {/* Countdown Timer */}
             <div style={{ 
-              ...glassStyle, padding: '40px', textAlign: 'center', 
+              ...glassStyle, padding: 'clamp(24px, 5vw, 40px)', textAlign: 'center', 
               border: `1px solid ${THEME.accent}`, 
               background: `linear-gradient(135deg, ${THEME.surface} 0%, ${THEME.accentMuted} 100%)`
             }}>
-              <h3 style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', color: THEME.accent, marginBottom: '32px' }}>
+              <h3 style={{ fontSize: 'clamp(10px, 2vw, 12px)', fontWeight: 800, letterSpacing: '2px', color: THEME.accent, marginBottom: 'clamp(20px, 4vw, 32px)' }}>
                 TIME REMAINING
               </h3>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '40px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(10px, 2vw, 15px)', marginBottom: 'clamp(24px, 4vw, 40px)', flexWrap: 'wrap' }}>
                 {[
                   { v: timeLeft.days, l: 'D' },
                   { v: timeLeft.hours, l: 'H' },
@@ -394,8 +410,8 @@ const TaskDetail: React.FC = () => {
                   { v: timeLeft.seconds, l: 'S' }
                 ].map((unit, i) => (
                   <div key={i}>
-                    <div style={{ fontSize: '32px', fontWeight: 900 }}>{String(unit.v).padStart(2, '0')}</div>
-                    <div style={{ fontSize: '10px', color: THEME.textSecondary, marginTop: '4px' }}>{unit.l}</div>
+                    <div style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 900 }}>{String(unit.v).padStart(2, '0')}</div>
+                    <div style={{ fontSize: 'clamp(8px, 1.5vw, 10px)', color: THEME.textSecondary, marginTop: '4px' }}>{unit.l}</div>
                   </div>
                 ))}
               </div>

@@ -4,13 +4,13 @@ import { getAnalytics } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyDSl5dlnhPVFH34MVCQ6iomvECV23pdlk4",
+  authDomain: "rsm-robo.firebaseapp.com",
+  projectId: "rsm-robo",
+  storageBucket: "rsm-robo.firebasestorage.app",
+  messagingSenderId: "569097891494",
+  appId: "1:569097891494:web:0cbdaf9bee3c716e6c0e67",
+  measurementId: "G-F988X4CZ3D"
 };
 
 export const app = initializeApp(firebaseConfig);
