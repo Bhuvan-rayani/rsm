@@ -11,6 +11,7 @@ import QuizTaker from '../components/QuizTaker';
 import QuizAttempt from '../pages/QuizAttempt';
 import Leaderboard from '../components/Leaderboard';
 import { preloadedBook } from '../preloadedBook';
+import { researchBooks } from '../researchBooksData';
 import { quizzes } from '../data/quizzes';
 
 type TabType = 'tasks' | 'quizzes' | 'leaderboard' | 'submit' | 'resources' | 'forum';
@@ -84,7 +85,7 @@ const StudentDashboard: React.FC = () => {
   const [tasksFilter, setTasksFilter] = useState<'all' | 'in-progress'>('all');
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
   const [showVideoDetail, setShowVideoDetail] = useState(false);
-  const [books, setBooks] = useState<Array<{id: string; title: string; author: string; year: number; coverImage: string; pdfPath: string; pdfFile?: File}>>([]);
+  const [books, setBooks] = useState<Array<{id: string; title: string; author: string; year: number; coverImage: string; pdfPath: string; pdfFile?: File}>>(researchBooks);
   const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
   const [forumReplies, setForumReplies] = useState<Record<string, ForumReply[]>>({});
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
@@ -131,33 +132,11 @@ const StudentDashboard: React.FC = () => {
     }
   }, [selectedVideoIndex, showVideoDetail]);
 
-  // Load books from localStorage on mount
+  // Sync books to localStorage on change
   useEffect(() => {
-    console.log('Loading books... preloadedBook:', preloadedBook);
-    const savedBooks = localStorage.getItem('rsm-books');
-    console.log('Saved books from localStorage:', savedBooks);
-    if (savedBooks) {
-      try {
-        const books = JSON.parse(savedBooks);
-        // Check if preloaded book is already in the list
-        if (!books.find((b: any) => b.id === preloadedBook.id)) {
-          console.log('Adding preloadedBook to existing books');
-          setBooks([...books, preloadedBook]);
-        } else {
-          console.log('PreloadedBook already exists, using saved books');
-          setBooks(books);
-        }
-      } catch (error) {
-        console.error('Failed to load books:', error);
-        // If error, start with preloaded book
-        setBooks([preloadedBook]);
-      }
-    } else {
-      // No saved books, start with the preloaded book
-      console.log('No saved books, starting with preloadedBook');
-      setBooks([preloadedBook]);
-    }
-  }, []);
+    localStorage.setItem('rsm-books', JSON.stringify(books));
+    console.log('Books saved to localStorage:', books.length, 'books');
+  }, [books]);
 
   // Restore submitted quizzes when user changes
   useEffect(() => {
@@ -186,6 +165,7 @@ const StudentDashboard: React.FC = () => {
 
   // Save books to localStorage whenever they change
   useEffect(() => {
+    console.log('Books state changed:', books.length, 'books', books);
     localStorage.setItem('rsm-books', JSON.stringify(books));
   }, [books]);
 
@@ -290,18 +270,19 @@ const StudentDashboard: React.FC = () => {
 
   // Premium gold/navy theme
   const THEME = {
-    background: '#0A0E27',        // Deep navy
-    sidebar: '#1A1653',           // Navy blue
-    card: '#1A1F3A',              // Darker navy
-    cardHover: '#242856',         // Lighter navy on hover
-    textPrimary: '#F4F6F8',       // White
-    textSecondary: '#B8C5D6',     // Light gray-blue
-    textMuted: '#8895A8',         // Muted gray
-    accentPrimary: '#D4AF37',     // Premium gold
-    accentSecondary: '#F4D03F',   // Bright gold
+    background: '#02040A',        // Ultra-dark from TaskDetail
+    sidebar: '#0D1117',           // Dark surface
+    card: 'rgba(13, 17, 23, 0.7)',// Glass surface
+    cardHover: 'rgba(59, 130, 246, 0.1)',  // Blue accent muted
+    textPrimary: '#FFFFFF',       // White
+    textSecondary: '#8B949E',     // Muted text
+    textMuted: '#6E7681',         // Darker muted
+    accentPrimary: '#3B82F6',     // Blue accent
+    accentSecondary: '#60A5FA',   // Light blue
     success: '#10B981',           // Emerald
     warning: '#F59E0B',           // Amber
     error: '#EF4444',             // Red
+    glassBorder: 'rgba(255, 255, 255, 0.08)',
   };
 
   const mockTasks = [
@@ -310,31 +291,23 @@ const StudentDashboard: React.FC = () => {
       title: 'RSM Task 1: Basic Research Tools',
       category: 'Research',
       difficulty: 'Medium',
-      dueDate: '2025-03-15',
-      status: 'pending',
-      description: 'Learn to read, understand, and compare robotics research papers using modern research and AI tools.',
+      dueDate: '2026-02-13',
+      status: 'in-progress',
+      description: 'Develop practical research skills by using modern tools, reading papers efficiently, and producing a concise report.',
       details: {
-        overview: 'The goal of this task is to introduce you to reading, understanding, and comparing robotics research papers, while also learning how to use modern research and AI tools effectively.',
+        overview: 'This task builds foundational research skills. You will explore essential research tools, practice skimming and deep reading, evaluate paper quality, organize notes systematically, and reflect on how AI tools support understanding. Submit a short, original report that demonstrates your process and key learnings.',
         sections: [
           {
-            title: '1. Choose a Robotics Problem',
-            content: 'Choose any problem domain related to robotics that interests you (e.g., legged robots, robotic manipulators, mobile robots). Briefly describe the chosen problem, what makes it challenging to solve on real-world robots.'
+            title: 'Tools You Must Learn and Use',
+            content: 'Explore and practically use each tool: Google Scholar, Semantic Scholar, SciSpace, Scopus, ResearchGate, NotebookLM, Zotero, Mendeley, Notion, and Obsidian. You do not need expert mastery, but you should understand what each tool is used for and how it supports research.'
           },
           {
-            title: '2. Select Two Research Papers',
-            content: 'Choose two high-quality research papers related to your selected problem. For each paper, explain why you selected it and describe the robot, hardware, or simulation setup assumed.'
+            title: 'Concepts to Learn Through This Task',
+            content: 'Reading papers efficiently; skimming vs detailed reading; identifying the problem, method, results, and limitations; evaluating quality and relevance (citations, venue, reliability); organizing notes and linking ideas; using AI tools for summarization, clarification, and comparison; comparing research approaches and trade-offs; extracting actionable insights from dense content.'
           },
           {
-            title: '3. Deep Dive into One Paper',
-            content: 'Pick one paper and explain: core idea and motivation, overall system flow or methodology, one important equation/algorithm/control strategy, and at least one real-world limitation.'
-          },
-          {
-            title: '4. Quick Comparison',
-            content: 'Compare the two papers discussing differences in approach, practical feasibility, and justify which approach you would implement on a student-level robot.'
-          },
-          {
-            title: '5. AI Tool Usage',
-            content: 'Write two AI prompts you used during this task and explain how each helped you understand the paper or problem better.'
+            title: 'What You Need to Submit (Final Report)',
+            content: 'Write a short, clear report in your own words covering: how you read research papers, how you skim vs do detailed reading, how you identify problem/method/results/limitations, how you judge paper quality, how you organized notes and papers, how AI tools helped, how you compared approaches, and your key learnings. Copy‑pasted definitions or AI‑generated text without understanding will not be accepted.'
           }
         ],
         tools: ['Google Scholar', 'Semantic Scholar', 'SciSpace', 'Scopus', 'ResearchGate', 'NotebookLM', 'Zotero', 'Mendeley', 'Notion', 'Obsidian'],
@@ -351,117 +324,298 @@ const StudentDashboard: React.FC = () => {
   const mockVideos = [
     {
       id: 1,
-      title: 'How to Read and Understand Research Papers',
-      channel: 'Research Tips',
-      duration: '12:45',
-      thumbnail: 'https://img.youtube.com/vi/6gjzCrOFETE/maxresdefault.jpg',
-      embedId: '6gjzCrOFETE',
-      description: 'Learn the essential strategies for reading, understanding, and summarizing robotics research papers effectively.'
+      title: 'The Triple Pass Method: How to Read Research Papers Like a Pro',
+      channel: 'Prof. David Stuckler',
+      duration: '09:43',
+      thumbnail: 'https://img.youtube.com/vi/WVv2jWXW0K4/maxresdefault.jpg',
+      embedId: 'WVv2jWXW0K4',
+      description: 'Stop wasting hours on a single paper. Professor David Stuckler reveals the "Triple Pass" strategy—Bird\'s Eye, Swoop, and Street Level—to help you digest 5 papers in the time it used to take for one.'
     },
     {
       id: 2,
-      title: 'Using AI Tools to Understand Research Papers',
-      channel: 'AI Research',
-      duration: '15:30',
+      title: 'Smart Reading: Why Research Papers Are Easier Than You Think',
+      channel: 'Dario Tringali',
+      duration: '11:07',
       thumbnail: 'https://img.youtube.com/vi/IY7PVEZVqtY/maxresdefault.jpg',
       embedId: 'IY7PVEZVqtY',
-      description: 'Discover how to use modern AI tools and services to extract insights from complex research papers.'
+      description: 'PhD student Dario Tringali breaks down the anatomy of a paper and shares a crucial secret: you don\'t have to read every word. Learn how to skim effectively and use AI as a tool, not a crutch.'
     },
     {
       id: 3,
-      title: 'Comparing Research Approaches in Robotics',
-      channel: 'Research Methods',
-      duration: '18:20',
+      title: 'NotebookLM Mastery: The Best AI Research Tool in 2025',
+      channel: 'Enovair',
+      duration: '20:17',
       thumbnail: 'https://img.youtube.com/vi/dYi2FY3-XNY/maxresdefault.jpg',
       embedId: 'dYi2FY3-XNY',
-      description: 'Master the skill of comparing different research methodologies and approaches in robotics.'
+      description: 'Master your research chaos with Google\'s NotebookLM. This deep dive shows you how to turn scattered PDFs and videos into interactive podcasts, mind maps, and automated reports in record time.'
     },
     {
       id: 4,
-      title: 'Note-Taking and Reference Management',
-      channel: 'Academic Tools',
-      duration: '14:15',
+      title: 'The 2026 Researcher\'s AI Toolkit: Beyond ChatGPT',
+      channel: 'Andy Stapleton',
+      duration: '17:13',
       thumbnail: 'https://img.youtube.com/vi/pDOPL53tcwQ/maxresdefault.jpg',
       embedId: 'pDOPL53tcwQ',
-      description: 'Learn how to organize your research notes using tools like Notion, Zotero, and Mendeley.'
+      description: 'Dr. Andy Stapleton reviews the powerhouse tools every modern academic needs, from literature mapping with Litmaps to AI-assisted writing with Jenni AI and SciSpace.'
     },
     {
       id: 5,
-      title: 'Advanced Research Paper Analysis',
-      channel: 'Academic Skills',
-      duration: '16:45',
+      title: 'Gemini Deep Research: Using AI for PhD-Level Topics',
+      channel: 'Google',
+      duration: '02:01',
       thumbnail: 'https://img.youtube.com/vi/buwMJxvW7wI/maxresdefault.jpg',
       embedId: 'buwMJxvW7wI',
-      description: 'Deep dive into analyzing complex research papers and extracting key insights.'
+      description: 'See the power of Gemini\'s new Deep Research feature. Watch as the AI builds a research plan, crawls the web for high-quality sources, and synthesizes complex data into one comprehensive report.'
     },
     {
       id: 6,
-      title: 'Literature Review Strategies',
-      channel: 'Research Methods',
-      duration: '14:30',
+      title: 'The Art of Research: A Guide to Sources and Context',
+      channel: 'Overly Sarcastic Productions',
+      duration: '07:19',
       thumbnail: 'https://img.youtube.com/vi/sigJwoeU6OI/maxresdefault.jpg',
       embedId: 'sigJwoeU6OI',
-      description: 'Learn effective strategies for conducting comprehensive literature reviews.'
+      description: 'A brilliant breakdown of the research process. Learn how to use Wikipedia as a jumping-off point, distinguish between primary and secondary sources, and connect the dots to form a unique thesis.'
     },
     {
       id: 7,
-      title: 'Critical Evaluation of Research',
-      channel: 'Academic Excellence',
-      duration: '13:20',
+      title: 'Insider Tips for Fast and Effective Research',
+      channel: 'Andy Stapleton',
+      duration: '14:12',
       thumbnail: 'https://img.youtube.com/vi/iW2DaL-g1CU/maxresdefault.jpg',
       embedId: 'iW2DaL-g1CU',
-      description: 'Master the art of critically evaluating research methodologies and findings.'
+      description: 'Whether for a PhD or a hobby, learn how to lay a solid foundation. Dr. Andy Stapleton shares tips on defining your research boundaries, sorting "murky" data, and knowing exactly when to stop.'
     },
     {
       id: 8,
-      title: 'Research Data Analysis Techniques',
-      channel: 'Data Science Hub',
-      duration: '19:15',
+      title: 'NotebookLM in 30 Minutes: Learn Anything Faster',
+      channel: 'Tina Huang',
+      duration: '30:51',
       thumbnail: 'https://img.youtube.com/vi/qbt-MFVvQQY/maxresdefault.jpg',
       embedId: 'qbt-MFVvQQY',
-      description: 'Explore advanced techniques for analyzing research data effectively.'
+      description: 'Tina Huang shows you how to turn NotebookLM into a personalized study partner. Learn to automate workflows, build AI products, and use "audio overviews" to retain information during your commute.'
     },
     {
       id: 9,
-      title: 'Academic Writing Best Practices',
-      channel: 'Writing Workshop',
-      duration: '17:50',
+      title: 'Prompt Engineering Secrets: How to Actually Talk to AI',
+      channel: 'Varun Mayya',
+      duration: '23:14',
       thumbnail: 'https://img.youtube.com/vi/VnEoS2eQXsw/maxresdefault.jpg',
       embedId: 'VnEoS2eQXsw',
-      description: 'Learn best practices for academic writing and research documentation.'
+      description: '99% of people prompt AI wrong. Varun Mayya explains "World Building" and "Meta-Prompting," teaching you how to stitch together unique puzzle pieces of data to get the exact output you envision.'
     },
     {
       id: 10,
-      title: 'Research Collaboration Tools',
-      channel: 'Tech for Researchers',
-      duration: '15:40',
+      title: 'Google\'s Prompt Engineering Course: 9 Hours in 20 Minutes',
+      channel: 'Tina Huang',
+      duration: '20:17',
       thumbnail: 'https://img.youtube.com/vi/p09yRj47kNM/maxresdefault.jpg',
       embedId: 'p09yRj47kNM',
-      description: 'Discover modern tools for collaborating on research projects.'
+      description: 'Save yourself 9 hours of training. Tina Huang summarizes Google\'s essential course, covering advanced techniques like Chain of Thought, Tree of Thought, and the "Tiny Crabs" framework for perfect prompts.'
     },
     {
       id: 11,
-      title: 'Publishing Your Research',
-      channel: 'Academic Publishing',
-      duration: '18:25',
+      title: '10x Faster Paper Discovery with Google Scholar AI',
+      channel: 'Andy Stapleton',
+      duration: '06:28',
       thumbnail: 'https://img.youtube.com/vi/UgsIZD_oheE/maxresdefault.jpg',
       embedId: 'UgsIZD_oheE',
-      description: 'Step-by-step guide to publishing your research in academic journals.'
+      description: 'Google Scholar just got a massive AI upgrade. Explore the new "Labs" features that allow you to ask detailed research questions and get instant AI-summarized answers directly from scholarly articles.'
     },
     {
       id: 12,
-      title: 'Research Ethics and Integrity',
-      channel: 'Research Ethics',
-      duration: '16:10',
-      thumbnail: 'https://img.youtube.com/vi/WVv2jWXW0K4/maxresdefault.jpg',
-      embedId: 'WVv2jWXW0K4',
-      description: 'Understanding ethical considerations in research and maintaining integrity.'
+      title: 'How to Research Any Topic: Deep-Dive Like a PhD Student',
+      channel: 'Charlotte Fraza',
+      duration: '17:21',
+      thumbnail: 'https://img.youtube.com/vi/6gjzCrOFETE/maxresdefault.jpg',
+      embedId: '6gjzCrOFETE',
+      description: 'Post-doc researcher Charlotte Fraza lifts the veil on the academic process. Learn to narrow down general topics into specific questions and build a knowledge web using tools like Research Rabbit.'
     }
   ];
 
   const mockReadingResources = [];
 
-  const mockResearchPapers = [];
+  const mockResearchPapers = [
+    {
+      id: 1,
+      title: 'FastSLAM: An Efficient Solution to the Simultaneous Localization and Mapping Problem',
+      authors: 'Thrun et al.',
+      category: 'SLAM & Localization',
+      year: 2003,
+      url: 'https://robots.stanford.edu/papers/Thrun03g.pdf',
+      description: 'Foundational SLAM algorithm using particle filters for efficient localization and mapping.'
+    },
+    {
+      id: 2,
+      title: 'FastSLAM: A Factored Solution to SLAM',
+      authors: 'Montemerlo et al.',
+      category: 'SLAM & Localization',
+      year: 2002,
+      url: 'https://www.cs.cmu.edu/~mmde/mmdeaaai2002.pdf',
+      description: 'Alternative formulation of FastSLAM with factored particle filter approach.'
+    },
+    {
+      id: 3,
+      title: 'ORB-SLAM: A Versatile and Accurate Monocular SLAM System',
+      authors: 'Raúl Mur-Artal et al.',
+      category: 'SLAM & Localization',
+      year: 2015,
+      url: 'https://www.researchgate.net/publication/271823237_ORB-SLAM_a_versatile_and_accurate_monocular_SLAM_system',
+      description: 'Visual SLAM system using ORB features for real-time monocular camera localization.'
+    },
+    {
+      id: 4,
+      title: 'A Survey on Active Simultaneous Localization and Mapping',
+      authors: 'Various',
+      category: 'SLAM & Localization',
+      year: 2022,
+      url: 'https://arxiv.org/abs/2207.00254',
+      description: 'Comprehensive survey on active SLAM techniques combining perception and active planning.'
+    },
+    {
+      id: 5,
+      title: 'A Review of Visual SLAM for Robotics: Evolution, Properties, and Methods',
+      authors: 'Various',
+      category: 'SLAM & Localization',
+      year: 2023,
+      url: 'https://pubmed.ncbi.nlm.nih.gov/37872668/',
+      description: 'Detailed review of visual SLAM methods evolution in robotics applications.'
+    },
+    {
+      id: 6,
+      title: 'Augmented Reality and Robotics: A Survey and Taxonomy',
+      authors: 'Various',
+      category: 'General Robotics',
+      year: 2022,
+      url: 'https://arxiv.org/abs/2203.03254',
+      description: 'Survey on integration of AR with robotics for human-robot interaction.'
+    },
+    {
+      id: 7,
+      title: 'Foundation Models in Robotics: Applications, Challenges, and the Future',
+      authors: 'Various',
+      category: 'General Robotics',
+      year: 2023,
+      url: 'https://arxiv.org/abs/2312.07843',
+      description: 'Modern perspective on large foundation models applied to robotics tasks.'
+    },
+    {
+      id: 8,
+      title: 'Multi-Goal Reinforcement Learning: Challenging Robotics Environments',
+      authors: 'Various',
+      category: 'General Robotics',
+      year: 2018,
+      url: 'https://arxiv.org/abs/1802.09464',
+      description: 'RL techniques for multi-goal robotics environments with complex constraints.'
+    },
+    {
+      id: 9,
+      title: 'The Basics of Robotics',
+      authors: 'Various',
+      category: 'General Robotics',
+      year: 2020,
+      url: 'https://www.theseus.fi/bitstream/handle/10024/37806/Shakhatreh_Fareed.pdf',
+      description: 'Comprehensive introduction to fundamental robotics concepts and methods.'
+    },
+    {
+      id: 10,
+      title: 'Robotics Research Paper: General Overview',
+      authors: 'Various',
+      category: 'General Robotics',
+      year: 2021,
+      url: 'https://www.scribd.com/document/511999731/Robotics-Research-Paper',
+      description: 'General overview of current robotics research landscape and trends.'
+    },
+    {
+      id: 11,
+      title: 'Reinforcement Learning-based Robot Navigation and Tracking',
+      authors: 'Various',
+      category: 'Machine Learning',
+      year: 2023,
+      url: 'https://orca.cardiff.ac.uk/id/eprint/168812/7/Reinforcement_Learning_based_Robot_Navigation_and_Tracking%20%281%29.pdf',
+      description: 'RL applications for autonomous robot navigation and real-time tracking.'
+    },
+    {
+      id: 12,
+      title: 'Research on Robot Path Planning Based on Visual SLAM',
+      authors: 'Various',
+      category: 'Path Planning',
+      year: 2024,
+      url: 'https://arxiv.org/pdf/2404.14077',
+      description: 'Integration of visual SLAM with path planning algorithms for autonomous robots.'
+    },
+    {
+      id: 13,
+      title: 'Present and Future of SLAM in Extreme Environments',
+      authors: 'NASA JPL',
+      category: 'SLAM & Localization',
+      year: 2022,
+      url: 'https://www-robotics.jpl.nasa.gov/media/documents/2208.01787.pdf',
+      description: 'SLAM techniques for planetary rovers and extreme environment exploration.'
+    },
+    {
+      id: 14,
+      title: 'Recent Advances in Robotics and Intelligent Robots Applications',
+      authors: 'Various',
+      category: 'General Robotics',
+      year: 2024,
+      url: 'https://www.researchgate.net/publication/380668049_Recent_Advances_in_Robotics_and_Intelligent_Robots_Applications',
+      description: 'Collection of recent advances in intelligent robotic systems and applications.'
+    },
+    {
+      id: 15,
+      title: 'Robotics Journal: Special Issue on Modern Robotics',
+      authors: 'MDPI Robotics',
+      category: 'General Robotics',
+      year: 2023,
+      url: 'https://www.mdpi.com/2218-6581/11/1',
+      description: 'Open access collection of robotics research articles from MDPI Robotics journal.'
+    },
+    {
+      id: 16,
+      title: 'The International Journal of Robotics Research Archives',
+      authors: 'IJRR',
+      category: 'General Robotics',
+      year: 2023,
+      url: 'http://ijr.sagepub.com/content/by/year',
+      description: 'Peer-reviewed robotics research from the leading IJRR publication.'
+    },
+    {
+      id: 17,
+      title: 'Robotics & Autonomous Systems: Recent Publications',
+      authors: 'ScienceDirect',
+      category: 'General Robotics',
+      year: 2024,
+      url: 'https://www.sciencedirect.com/journal/robotics-and-autonomous-systems',
+      description: 'Curated robotics and autonomous systems research articles from leading journal.'
+    },
+    {
+      id: 18,
+      title: 'List of SLAM Methods and Algorithms',
+      authors: 'Wikipedia Robotics Community',
+      category: 'SLAM & Localization',
+      year: 2024,
+      url: 'https://en.wikipedia.org/wiki/List_of_SLAM_methods',
+      description: 'Comprehensive list of SLAM methods, algorithms, and research references.'
+    },
+    {
+      id: 19,
+      title: '20 Most Cited Papers in Robotics: Comprehensive List',
+      authors: 'Doradolist',
+      category: 'General Robotics',
+      year: 2024,
+      url: 'https://www.doradolist.com/papers/20-most-cited-papers-in-robotics',
+      description: 'Curated list of the most influential and cited robotics research papers.'
+    },
+    {
+      id: 20,
+      title: 'Robotics Research Database & Resource Hub',
+      authors: 'Academic Community',
+      category: 'General Robotics',
+      year: 2024,
+      url: 'https://www.doradolist.com/papers/20-most-cited-papers-in-robotics',
+      description: 'Centralized resource for finding high-impact robotics research papers and links.'
+    }
+  ];
 
   // Load user's quiz attempts
   useEffect(() => {
@@ -703,7 +857,7 @@ const StudentDashboard: React.FC = () => {
             onClick={() => { setActiveTab('tasks'); setTasksFilter('all'); }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium"
             style={{ 
-              backgroundColor: activeTab === 'tasks' ? 'rgba(61, 220, 190, 0.15)' : 'transparent',
+              backgroundColor: activeTab === 'tasks' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
               color: activeTab === 'tasks' ? THEME.accentPrimary : THEME.textSecondary,
               borderLeft: activeTab === 'tasks' ? `3px solid ${THEME.accentPrimary}` : '3px solid transparent'
             }}
@@ -718,7 +872,7 @@ const StudentDashboard: React.FC = () => {
             onClick={() => setActiveTab('quizzes')}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium"
             style={{ 
-              backgroundColor: activeTab === 'quizzes' ? 'rgba(61, 220, 190, 0.15)' : 'transparent',
+              backgroundColor: activeTab === 'quizzes' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
               color: activeTab === 'quizzes' ? THEME.accentPrimary : THEME.textSecondary,
               borderLeft: activeTab === 'quizzes' ? `3px solid ${THEME.accentPrimary}` : '3px solid transparent'
             }}
@@ -733,7 +887,7 @@ const StudentDashboard: React.FC = () => {
             onClick={() => setActiveTab('submit')}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium"
             style={{ 
-              backgroundColor: activeTab === 'submit' ? 'rgba(61, 220, 190, 0.15)' : 'transparent',
+              backgroundColor: activeTab === 'submit' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
               color: activeTab === 'submit' ? THEME.accentPrimary : THEME.textSecondary,
               borderLeft: activeTab === 'submit' ? `3px solid ${THEME.accentPrimary}` : '3px solid transparent'
             }}
@@ -748,7 +902,7 @@ const StudentDashboard: React.FC = () => {
             onClick={() => setActiveTab('leaderboard')}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium"
             style={{ 
-              backgroundColor: activeTab === 'leaderboard' ? 'rgba(61, 220, 190, 0.15)' : 'transparent',
+              backgroundColor: activeTab === 'leaderboard' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
               color: activeTab === 'leaderboard' ? THEME.accentPrimary : THEME.textSecondary,
               borderLeft: activeTab === 'leaderboard' ? `3px solid ${THEME.accentPrimary}` : '3px solid transparent'
             }}
@@ -763,7 +917,7 @@ const StudentDashboard: React.FC = () => {
             onClick={() => setActiveTab('resources')}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left font-medium"
             style={{ 
-              backgroundColor: activeTab === 'resources' ? 'rgba(61, 220, 190, 0.15)' : 'transparent',
+              backgroundColor: activeTab === 'resources' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
               color: activeTab === 'resources' ? THEME.accentPrimary : THEME.textSecondary,
               borderLeft: activeTab === 'resources' ? `3px solid ${THEME.accentPrimary}` : '3px solid transparent'
             }}
@@ -833,7 +987,7 @@ const StudentDashboard: React.FC = () => {
             onClick={() => setShowProfileModal(true)}
             className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg transition-all"
             style={{ backgroundColor: THEME.accentPrimary, color: THEME.background }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#34C6AE'}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#60A5FA'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = THEME.accentPrimary}
           >
             <img
@@ -931,7 +1085,7 @@ const StudentDashboard: React.FC = () => {
           {activeTab === 'leaderboard' && (
             <div className="max-w-5xl">
               <h2 className="text-2xl font-bold mb-6" style={{ color: THEME.textPrimary }}>🏆 Leaderboard</h2>
-              <Leaderboard THEME={THEME} currentUserName={currentAuthor()} currentAvatar={`/rsm/assets/avatars/${selectedAvatar}.png`} quizzes={quizzes} />
+              <Leaderboard key={selectedAvatar} THEME={THEME} currentUserName={currentAuthor()} currentAvatar={`/rsm/assets/avatars/${selectedAvatar}.png`} quizzes={quizzes} />
             </div>
           )}
 
@@ -947,7 +1101,7 @@ const StudentDashboard: React.FC = () => {
                   <p className="text-lg" style={{ color: THEME.textSecondary }}>
                     The submission link will be provided <span className="font-bold" style={{ color: THEME.accentPrimary }}>before the deadline</span>
                   </p>
-                  <div className="p-6 rounded-lg" style={{ backgroundColor: 'rgba(61, 220, 190, 0.1)', borderLeft: `4px solid ${THEME.accentPrimary}` }}>
+                  <div className="p-6 rounded-lg" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderLeft: `4px solid ${THEME.accentPrimary}` }}>
                     <p style={{ color: THEME.textSecondary }}>
                       Please check back here closer to the submission deadline. Your submission link will appear here with full instructions.
                     </p>
@@ -1044,9 +1198,20 @@ const StudentDashboard: React.FC = () => {
 
                 {/* Video Detail (page 2) */}
                 {showVideoDetail && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6" style={{ backgroundColor: 'rgba(0,0,0,0.75)' }}>
+                  <div className="fixed inset-0 z-50 overflow-y-auto" style={{ backgroundColor: 'rgba(0,0,0,0.85)' }}>
+                    {/* Sticky Back Button */}
+                    <div className="sticky top-0 z-50 px-4 py-4 border-b border-white/10" style={{ backgroundColor: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(8px)' }}>
+                      <button
+                        onClick={() => setShowVideoDetail(false)}
+                        className="px-4 py-2 rounded-lg font-semibold flex items-center gap-2 text-sm md:text-base"
+                        style={{ backgroundColor: THEME.accentPrimary, color: THEME.background }}
+                      >
+                        ← Back to Library
+                      </button>
+                    </div>
+
                     <div
-                      className="relative w-full max-w-6xl rounded-3xl overflow-hidden"
+                      className="relative w-full max-w-6xl mx-auto rounded-3xl overflow-hidden"
                       style={{
                         minHeight: '80vh',
                         backgroundColor: THEME.card,
@@ -1072,17 +1237,7 @@ const StudentDashboard: React.FC = () => {
                       />
 
                       {/* Content */}
-                      <div className="relative z-10 flex flex-col items-center gap-6 px-6 py-10 h-full overflow-y-auto">
-                        {/* Back button */}
-                        <div className="w-full max-w-5xl flex justify-between items-center">
-                          <button
-                            onClick={() => setShowVideoDetail(false)}
-                            className="px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
-                            style={{ backgroundColor: THEME.accentPrimary, color: THEME.background }}
-                          >
-                            ← Back to Library
-                          </button>
-                        </div>
+                      <div className="relative z-10 flex flex-col items-center gap-6 px-6 py-10">
 
                         {/* Main video card */}
                         <div className="relative w-full max-w-5xl rounded-2xl overflow-hidden" style={{ boxShadow: '0 24px 70px rgba(0,0,0,0.55)' }}>
@@ -1103,7 +1258,7 @@ const StudentDashboard: React.FC = () => {
                         <div className="text-center">
                           <h3
                             className="font-black text-4xl tracking-tight uppercase"
-                            style={{ color: '#E7FF7F', textShadow: '0 3px 14px rgba(0,0,0,0.6)' }}
+                            style={{ color: '#FFFFFF', textShadow: '0 3px 14px rgba(59, 130, 246, 0.4)' }}
                           >
                             {mockVideos[selectedVideoIndex].title}
                           </h3>
@@ -1118,7 +1273,7 @@ const StudentDashboard: React.FC = () => {
                           <button
                             onClick={() => scrollRow(videosRowRef, 'left')}
                             className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold"
-                            style={{ backgroundColor: THEME.accentPrimary, color: THEME.background, boxShadow: '0 10px 30px rgba(61,220,190,0.5)' }}
+                            style={{ backgroundColor: THEME.accentPrimary, color: THEME.background, boxShadow: '0 10px 30px rgba(59,130,246,0.5)' }}
                           >
                             ‹
                           </button>
@@ -1205,7 +1360,7 @@ const StudentDashboard: React.FC = () => {
                           <button
                             onClick={() => scrollRow(videosRowRef, 'right')}
                             className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold"
-                            style={{ backgroundColor: THEME.accentPrimary, color: THEME.background, boxShadow: '0 10px 30px rgba(61,220,190,0.5)' }}
+                            style={{ backgroundColor: THEME.accentPrimary, color: THEME.background, boxShadow: '0 10px 30px rgba(59,130,246,0.5)' }}
                           >
                             ›
                           </button>
@@ -1223,7 +1378,7 @@ const StudentDashboard: React.FC = () => {
                 <h2 className="text-3xl font-black mb-8" style={{ color: THEME.textPrimary }}>📖 Reading Resources</h2>
                 
                 {books.length === 0 ? (
-                  <div className="text-center py-12 rounded-xl border-2 border-dashed" style={{ borderColor: 'rgba(255, 255, 255, 0.1)', backgroundColor: 'rgba(61, 220, 190, 0.03)' }}>
+                  <div className="text-center py-12 rounded-xl border-2 border-dashed" style={{ borderColor: 'rgba(255, 255, 255, 0.1)', backgroundColor: 'rgba(59, 130, 246, 0.03)' }}>
                     <div style={{ fontSize: '48px' }} className="mb-4">📚</div>
                     <p style={{ color: THEME.textSecondary }} className="text-lg font-semibold mb-2">Your library is empty</p>
                     <p style={{ color: THEME.textMuted }} className="text-sm">Upload book covers and PDFs to build your collection!</p>
@@ -1407,7 +1562,7 @@ const StudentDashboard: React.FC = () => {
                                 setReplyDrafts({ ...replyDrafts, [post.id]: '' });
                               }}
                               className="px-6 py-2.5 rounded-lg text-sm font-bold transition-all hover:scale-105 hover:shadow-lg"
-                              style={{ background: `linear-gradient(135deg, ${THEME.accentPrimary} 0%, #B8860B 100%)`, color: THEME.background }}
+                              style={{ background: `linear-gradient(135deg, ${THEME.accentPrimary} 0%, ${THEME.accentSecondary} 100%)`, color: THEME.background }}
                             >
                               Reply
                             </button>
@@ -1479,9 +1634,15 @@ const StudentDashboard: React.FC = () => {
                     <button
                       key={av}
                       onClick={() => {
+                        console.log('Changing avatar to:', av);
                         setSelectedAvatar(av);
                         setAvatarSaved(false);
-                        setTimeout(() => setAvatarSaved(true), 2000);
+                        // Save immediately and show confirmation
+                        if (avatarKey) {
+                          localStorage.setItem(avatarKey, av);
+                          console.log('Avatar saved to localStorage:', { key: avatarKey, value: av });
+                        }
+                        setTimeout(() => setAvatarSaved(true), 1500);
                       }}
                       className={`p-2 rounded-lg border-2 transition-all ${
                         selectedAvatar === av
@@ -1512,7 +1673,8 @@ const StudentDashboard: React.FC = () => {
               </div>
               <div style={{ marginTop: '12px' }}>
                 <p className="text-xs" style={{ color: THEME.textSecondary }}>Current: <span style={{ color: THEME.accentPrimary }}>{selectedAvatar}</span></p>
-                {!avatarSaved && <p className="text-xs mt-1" style={{ color: '#22C55E' }}>✅ Avatar saved!</p>}
+                {!avatarSaved && <p className="text-xs mt-1" style={{ color: THEME.accentPrimary }}>⏳ Saving...</p>}
+                {avatarSaved && <p className="text-xs mt-1" style={{ color: '#22C55E' }}>✅ Avatar saved to profile</p>}
               </div>
             </div>
 

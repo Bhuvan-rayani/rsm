@@ -28,20 +28,48 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ THEME, currentUserName, curre
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('overall');
   const [forumPoints, setForumPoints] = useState<Record<string, number>>({});
+
+  // Debug log
+  React.useEffect(() => {
+    console.log('Leaderboard received new avatar:', currentAvatar);
+  }, [currentAvatar]);
   const [quizPointsAll, setQuizPointsAll] = useState<Record<string, number>>({});
   const [quizPointsByQuiz, setQuizPointsByQuiz] = useState<Record<string, Record<string, number>>>({});
   const [quizTabs, setQuizTabs] = useState<QuizMeta[]>(quizzes);
 
-  // Forum points from posts (upvotes only to keep it light)
+  // Forum points from posts and replies (upvotes)
   useEffect(() => {
     const postsRef = collection(db, 'forumPosts');
-    const unsubscribe = onSnapshot(postsRef, (snapshot) => {
+    const unsubscribe = onSnapshot(postsRef, async (snapshot) => {
       const next: Record<string, number> = {};
+      
+      // Get points from posts
       snapshot.forEach(postDoc => {
         const post = postDoc.data() as any;
         const author = post.author || 'Anonymous';
         next[author] = (next[author] || 0) + (post.upvotes?.length ?? 0);
       });
+
+      // Get points from replies
+      const promises = snapshot.docs.map(async (postDoc) => {
+        try {
+          const repliesRef = collection(db, 'forumPosts', postDoc.id, 'replies');
+          const repliesSnapshot = await new Promise<any>((resolve, reject) => {
+            const unsubReplies = onSnapshot(repliesRef, resolve, reject);
+            setTimeout(() => unsubReplies(), 5000); // Cleanup after 5s
+          });
+          
+          repliesSnapshot.forEach((replyDoc: any) => {
+            const reply = replyDoc.data();
+            const author = reply.author || 'Anonymous';
+            next[author] = (next[author] || 0) + (reply.upvotes?.length ?? 0);
+          });
+        } catch (err) {
+          console.warn('Could not load replies:', err);
+        }
+      });
+
+      await Promise.all(promises);
       setForumPoints(next);
       setLoading(false);
     }, (err) => {
@@ -194,11 +222,16 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ THEME, currentUserName, curre
               }}
             >
               <div className="flex items-center gap-3 flex-1">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-black/30 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-black/30 flex items-center justify-center" key={entry.author === currentUserName ? currentAvatar : 'default'}>
                   <img
-                    src={entry.author === currentUserName && currentAvatar ? currentAvatar : '/rsm/assets/avatars/bluey_1.png'}
+                    src={entry.author === currentUserName && currentAvatar ? `${currentAvatar}?t=${Math.random()}` : '/rsm/assets/avatars/bluey_1.png'}
                     alt="avatar"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = '/rsm/assets/avatars/bluey_1.png';
+                    }}
                   />
                 </div>
                 <span className="text-lg font-bold w-8 text-center" style={{ color: THEME.accentPrimary }}>

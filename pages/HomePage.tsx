@@ -186,7 +186,7 @@ const HomePage: React.FC = () => {
               <MagicTextReveal 
                 text={`Welcome, ${user.displayName || user.email?.split('@')[0] || 'User'}!`}
                 color={colors.accent}
-                fontSize={40}
+                fontSize={20}
                 fontWeight={700}
                 spread={50}
                 speed={0.6}
@@ -201,7 +201,7 @@ const HomePage: React.FC = () => {
               />
               
               <h1 style={{
-                fontSize: 'clamp(32px, 8vw, 64px)',
+                fontSize: '50px',
                 fontWeight: '800',
                 background: `linear-gradient(135deg, ${colors.textPrimary} 0%, ${colors.accent} 100%)`,
                 WebkitBackgroundClip: 'text',
